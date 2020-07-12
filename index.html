@@ -43,7 +43,7 @@
     //get current day and time info
     var displayDate = moment().format("dddd, MMMM Do") // current date in format Sunday, July 12th
     $("#currentDay").text(displayDate);// sets current date on page
-    var currentHour = "9";//moment().format("HH");//0-23 hr time value
+    var currentHour = moment().format("HH");//0-23 hr time value
     
 
     //check for stored scheduleData
