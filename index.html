@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Work Day Scheduler</title>
+</head>
+
+<body>
+  <header class="jumbotron">
+    <h1 class="display-3">Work Day Scheduler</h1>
+    <p class="lead">A simple calendar app for scheduling your work day</p>
+    <p id="currentDay" class="lead"></p>
+  </header>
+  <div id="schedule" class="container">
+    <!-- Timeblocks go here -->
+    <!-- added in JavaScript -->
+    <!-- <div class="row">
+      <div class="col-sm-1 text-right hour">
+        formatted hour
+      </div>
+      <div id="7-text" class="col-sm-10">
+        event info
+      </div>
+      <div id="7" class="col-sm-1 saveBtn d-flex justify-content-center">
+        <i class="align-self-center fas fa-save"></i>
+      </div>
+    </div> -->
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+  <script>
+    //get current day and time info
+    var displayDate = moment().format("dddd, MMMM Do") // current date in format Sunday, July 12th
+    $("#currentDay").text(displayDate);// sets current date on page
+    var currentHour = "9";//moment().format("HH");//0-23 hr time value
+    
+
+    //check for stored scheduleData
+    var scheduleLS = localStorage.getItem("scheduleData"); // retrieve scheduleData from local storage
+    var scheduleData = {}; // initialize scheduleData, in case one is not stored in local storage
+    if (scheduleLS == null) { // if null, no scheduleData has been stored
+      console.log("no schedule stored");
+    } else {//else JSON parse stored data
+      scheduleData = JSON.parse(scheduleLS);
+    }
+
+
+    function populateText(i) {
+      if (scheduleData.hasOwnProperty(i)) {// if scheduleData has an entry for key i (hour number from 7 to 17)
+        return scheduleData[i]; // return the value stored in scheduleData at hour i
+      } else return "";
+    }
+
+
+    function formatPastPresentFuture(i) { // format text area for past present or future
+      if (i < currentHour) { // if hour i is less than current hour (0 - 23 hour format)
+        return ("past"); // format for past
+      } else if (i > currentHour) { // if hour i is greater than current hour (0-23 hr)
+        return ("future"); // format for future
+      } else if (i == currentHour) {// if hour i is the same as current hour
+        return ("present"); // for mat for present
+      } else return "";
+    }
+
+
+    function createSchedule() { // create and populate html elements for schedule
+      //7 to 5, or 0700 to 1700
+      for (var i = 7; i <= 17; i++) { // for hours 7AM to 5PM, create our row elements and populate them
+        var rowElement = $("<div>").addClass("row");
+        var hourElement = $("<div>").addClass("col-sm-1 text-right hour").text(i > 12 ? ((i % 12) + "PM") : (i + "AM"));// if i > 12, hour is i modulo 12 PM, else hour is i AM
+        var textElement = $("<textarea>").attr("id", i + "-text").addClass("col-sm-10");// text element id is "7-text" for ease of reference
+        textElement.text(populateText(i)); // set the textarea text to the value stored in scheduleData at hour i
+        textElement.addClass(formatPastPresentFuture(i)); // add past present future formatting
+        //create save button element
+        var saveElement = $("<div>").attr("id", i).addClass("col-sm-1 saveBtn d-flex justify-content-center").wrapInner("<i class=\" align-self-center fas fa-save\"></i>");
+
+        rowElement.append(hourElement, textElement, saveElement); // append to new row element
+        $("#schedule").append(rowElement); // append to page
+      }
+    }
+
+
+    createSchedule(); // call build function
+
+
+    $(".saveBtn").on("click", function () { // when a save button is clicked
+      scheduleData[this.id] = $("#" + this.id + "-text").val(); // update the corresponding textarea in scheduleData
+      localStorage.setItem("scheduleData", JSON.stringify(scheduleData)); // store new scheduleData
+    })
+
+  </script>
+</body>
+
+</html>
