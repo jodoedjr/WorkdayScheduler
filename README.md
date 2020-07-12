@@ -3,7 +3,7 @@ Work day planer using jQuery, the JS Moment library, Bootstrap 4, fontawesome ic
 
 
 ### Sample Schedule
-[Sample Schedule for July 12th](Assets/sampleSchedule.png)
+![Sample Schedule for July 12th](Assets/sampleSchedule.png)
 
 
 https://jodoedjr.github.io/WorkdayScheduler/
